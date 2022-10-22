@@ -1,3 +1,5 @@
+package com.dsidak.utils;
+
 @SuppressWarnings("ClassCanBeRecord")
 public class Message {
     private final String username;
@@ -11,7 +13,7 @@ public class Message {
     public static Message of(String messageWithUsername) {
         if (messageWithUsername.matches(".*:.*")) {
             String[] messageData = messageWithUsername.split(":", 2);
-            return new Message(messageData[0], messageData[1]);
+            return new Message(messageData[0], messageData[1].trim());
         }
         // TODO: handle incorrect message
         return new Message("", messageWithUsername);

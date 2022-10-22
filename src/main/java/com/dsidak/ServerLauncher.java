@@ -1,3 +1,7 @@
+package com.dsidak;
+
+import com.dsidak.server.Server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
