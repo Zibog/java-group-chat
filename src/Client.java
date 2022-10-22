@@ -29,7 +29,7 @@ public class Client {
             Scanner scanner = new Scanner(System.in);
             while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
-                writer.write(username + ": " + messageToSend);
+                writer.write(Message.of(username, messageToSend).toString());
                 writer.newLine();
                 writer.flush();
             }
@@ -48,7 +48,7 @@ public class Client {
                 while (socket.isConnected()) {
                     try {
                         messageFromChat = reader.readLine();
-                        System.out.println(messageFromChat);
+                        System.out.println(Message.of(messageFromChat));
                     } catch (IOException e) {
                         e.printStackTrace();
                         close();

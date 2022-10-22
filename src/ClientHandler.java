@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable {
 
             username = reader.readLine();
             clientHandlers.add(this);
-            broadcastMessage("SERVER: " + username + " has entered the chat!");
+            broadcastMessage(Message.of("SERVER", username + " has entered the chat!"));
         } catch (IOException e) {
             e.printStackTrace();
             close();
@@ -33,19 +33,18 @@ public class ClientHandler implements Runnable {
         while (socket.isConnected()) {
             try {
                 messageFromClient = reader.readLine();
-                broadcastMessage(messageFromClient);
+                broadcastMessage(Message.of(messageFromClient));
             } catch (IOException e) {
-                e.printStackTrace();
                 close();
                 break;
             }
         }
     }
 
-    public void broadcastMessage(String messageToSend) throws IOException {
+    public void broadcastMessage(Message messageToSend) throws IOException {
         for (ClientHandler handler : clientHandlers) {
             if (!handler.username.equals(username)) {
-                handler.writer.write(messageToSend);
+                handler.writer.write(messageToSend.toString());
                 handler.writer.newLine();
                 handler.writer.flush();
             }
@@ -55,7 +54,7 @@ public class ClientHandler implements Runnable {
     public void removeHandler() throws IOException {
         boolean removed = clientHandlers.remove(this);
         if (removed) {
-            broadcastMessage("SERVER: " + username + " has left the chat!");
+            broadcastMessage(Message.of("SERVER", username + " has left the chat!"));
         }
     }
 
