@@ -1,6 +1,5 @@
 package com.dsidak.utils;
 
-@SuppressWarnings("ClassCanBeRecord")
 public class Message {
     private final String username;
     private final String content;
@@ -10,13 +9,20 @@ public class Message {
         this.content = content;
     }
 
-    public static Message of(String messageWithUsername) {
-        if (messageWithUsername.matches(".*:.*")) {
-            String[] messageData = messageWithUsername.split(":", 2);
-            return new Message(messageData[0], messageData[1].trim());
+    public static Message of(String message) {
+        if (!message.matches(".*:.*")) {
+            //throw new IllegalArgumentException("Message without username: " + message);
+            System.out.println("Message without username: " + message);
+            return new Message("", message);
         }
-        // TODO: handle incorrect message
-        return new Message("", messageWithUsername);
+
+        String[] messageData = message.split(":", 2);
+        String username = messageData[0];
+        if (username.startsWith("[") && username.endsWith("]")) {
+            username = username.substring(1, username.length() - 1);
+        }
+
+        return new Message(username, messageData[1].trim());
     }
 
     public static Message of(String username, String content) {
@@ -32,7 +38,25 @@ public class Message {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Message message)) {
+            return false;
+        }
+
+        return username.equals(message.username) && content.equals(message.content);
+    }
+
+    @Override
     public String toString() {
-        return username + ": " + content;
+        return "[" + username + "]: " + content;
     }
 }

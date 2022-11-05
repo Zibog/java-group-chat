@@ -4,10 +4,20 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public record Server(ServerSocket serverSocket) {
+@SuppressWarnings("ClassCanBeRecord")
+public class Server {
+    /**
+     * The ServerSocket for accepting new connections
+     */
+    private final ServerSocket serverSocket;
+
+    public Server(ServerSocket serverSocket) {
+        this.serverSocket = serverSocket;
+    }
+
     public void start() {
         try {
-            System.out.println("Server started");
+            System.out.println("Server started at " + serverSocket.getLocalPort());
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
                 System.out.println("A new user has connected!");

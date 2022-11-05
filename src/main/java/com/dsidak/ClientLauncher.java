@@ -16,6 +16,6 @@ public class ClientLauncher {
         Socket socket = new Socket("localhost", 5500);
         Client client = new Client(socket, username);
         client.listenMessage();
-        client.sendMessage();
+        client.run();
     }
 }

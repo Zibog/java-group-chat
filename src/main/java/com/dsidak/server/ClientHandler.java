@@ -1,6 +1,7 @@
 package com.dsidak.server;
 
 import com.dsidak.utils.Message;
+import com.dsidak.utils.MessageUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,10 +10,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
-    public static List<ClientHandler> clientHandlers = new ArrayList<>();
+    // TODO: hide list of clients
+    public static List<ClientHandler> clientHandlers = Collections.synchronizedList(new ArrayList<>());
 
     private Socket socket;
     private BufferedReader reader;
@@ -41,7 +44,7 @@ public class ClientHandler implements Runnable {
         while (socket.isConnected()) {
             try {
                 messageFromClient = reader.readLine();
-                broadcastMessage(Message.of(messageFromClient));
+                broadcastMessage(messageFromClient);
             } catch (IOException e) {
                 close();
                 break;
@@ -50,11 +53,13 @@ public class ClientHandler implements Runnable {
     }
 
     public void broadcastMessage(Message messageToSend) throws IOException {
+        broadcastMessage(messageToSend.toString());
+    }
+
+    public void broadcastMessage(String messageToSend) throws IOException {
         for (ClientHandler handler : clientHandlers) {
             if (!handler.username.equals(username)) {
-                handler.writer.write(messageToSend.toString());
-                handler.writer.newLine();
-                handler.writer.flush();
+                MessageUtils.sendMessage(messageToSend, handler.writer);
             }
         }
     }
