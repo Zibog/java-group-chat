@@ -1,6 +1,6 @@
 name: Java Maven CI
 
-on: [push, workflow_dispatch]
+on: [push]
 
 jobs:
   build:
