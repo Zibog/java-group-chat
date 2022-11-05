@@ -25,10 +25,10 @@ public class ClientsInteractionTest implements Testable {
         try {
             // The java.net API will automatically allocate a free port
             server = new Server(new ServerSocket(0));
+            new Thread(() -> server.start()).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new Thread(() -> server.start()).start();
     }
 
     @Test
