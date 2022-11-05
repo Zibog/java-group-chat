@@ -7,6 +7,7 @@ import com.dsidak.utils.Testable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,12 +22,18 @@ public class ClientsInteractionTest implements Testable {
 
     @BeforeEach
     public void init() {
-        new Thread(this::startServer).start();
+        try {
+            // The java.net API will automatically allocate a free port
+            server = new Server(new ServerSocket(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        new Thread(() -> server.start()).start();
     }
 
     @Test
     public void testOneClient() throws IOException, TimeoutException {
-        Client client = new Client(new Socket("localhost", 7700), "client");
+        Client client = new Client(new Socket("localhost", server.getLocalPort()), "client");
         startClient(client);
 
         Message message1 = Message.of("client", "test");
@@ -43,18 +50,23 @@ public class ClientsInteractionTest implements Testable {
 
     @Test
     public void testTwoClients() throws IOException, TimeoutException {
-        Client client1 = new Client(new Socket("localhost", 7700), "client1");
+        Client client1 = new Client(new Socket("localhost", server.getLocalPort()), "client1");
         startClient(client1);
-        Client client2 = new Client(new Socket("localhost", 7700), "client2");
+        Client client2 = new Client(new Socket("localhost", server.getLocalPort()), "client2");
         startClient(client2);
 
         Message message1 = Message.of("client1", "test");
         client1.sendMessage(message1);
+        // TODO: this is hack for wrong accepting in-test usernames ClientHandler
+        BufferedWriter client2Writer = client2.getWriter();
+        client2Writer.write("client2");
+        client2Writer.newLine();
+        client2Writer.flush();
         Message message2 = Message.of("client2", "test");
         client2.sendMessage(message2);
 
         Queue<Message> messages1 = client1.getMessages();
-        Testable.waitFor(() -> messages1.size() == 2);
+        Testable.waitFor(() -> messages1.size() == 3);
         assertTrue(messages1.contains(message1));
         assertTrue(messages1.contains(message2));
 
@@ -66,11 +78,11 @@ public class ClientsInteractionTest implements Testable {
 
     @Test
     public void testThreeClients() throws IOException, TimeoutException {
-        Client client1 = new Client(new Socket("localhost", 7700), "client1");
+        Client client1 = new Client(new Socket("localhost", server.getLocalPort()), "client1");
         startClient(client1);
-        Client client2 = new Client(new Socket("localhost", 7700), "client2");
+        Client client2 = new Client(new Socket("localhost", server.getLocalPort()), "client2");
         startClient(client2);
-        Client client3 = new Client(new Socket("localhost", 7700), "client3");
+        Client client3 = new Client(new Socket("localhost", server.getLocalPort()), "client3");
         startClient(client3);
 
         Message message1 = Message.of("client1", "test");
@@ -96,7 +108,7 @@ public class ClientsInteractionTest implements Testable {
 
     @Test
     public void testNewConnection() throws IOException, TimeoutException {
-        Client client1 = new Client(new Socket("localhost", 7700), "client1");
+        Client client1 = new Client(new Socket("localhost", server.getLocalPort()), "client1");
         startClient(client1);
 
         Queue<Message> messages1 = client1.getMessages();
@@ -107,7 +119,7 @@ public class ClientsInteractionTest implements Testable {
         Testable.waitFor(() -> messages1.size() == 1);
         assertTrue(messages1.contains(message1));
 
-        Client client2 = new Client(new Socket("localhost", 7700), "client2");
+        Client client2 = new Client(new Socket("localhost", server.getLocalPort()), "client2");
         startClient(client2);
 
         Testable.waitFor(() -> messages1.size() == 2);
@@ -122,15 +134,6 @@ public class ClientsInteractionTest implements Testable {
 
         Testable.waitFor(() -> messages1.size() == 3);
         assertTrue(messages1.contains(message2));
-    }
-
-    private void startServer() {
-        try {
-            server = new Server(new ServerSocket(7700));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        server.start();
     }
 
     private void startClient(Client client) {

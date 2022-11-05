@@ -57,7 +57,11 @@ public class Client {
             while (socket.isConnected()) {
                 try {
                     messageFromChat = reader.readLine();
-                    readMessage(Message.of(messageFromChat));
+                    if (!messageFromChat.matches(".*:.*")) {
+                        readMessage(messageFromChat);
+                    } else {
+                        readMessage(Message.of(messageFromChat));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     close();
@@ -78,6 +82,19 @@ public class Client {
         messages.add(message);
     }
 
+    private void readMessage(String message) {
+        System.out.println(message);
+        messages.add(Message.of(message, ""));
+    }
+
+    public BufferedWriter getWriter() {
+        return writer;
+    }
+
+    public Queue<Message> getMessages() {
+        return messages;
+    }
+
     public void close() {
         try {
             if (reader != null) {
@@ -92,9 +109,5 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public Queue<Message> getMessages() {
-        return messages;
     }
 }

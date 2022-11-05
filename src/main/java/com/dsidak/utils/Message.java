@@ -11,9 +11,7 @@ public class Message {
 
     public static Message of(String message) {
         if (!message.matches(".*:.*")) {
-            //throw new IllegalArgumentException("Message without username: " + message);
-            System.out.println("Message without username: " + message);
-            return new Message("", message);
+            throw new IllegalArgumentException("Message without username: " + message);
         }
 
         String[] messageData = message.split(":", 2);

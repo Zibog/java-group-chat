@@ -3,6 +3,7 @@ package com.dsidak.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketOption;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class Server {
@@ -32,6 +33,10 @@ public class Server {
         } finally {
             close();
         }
+    }
+
+    public int getLocalPort() {
+        return serverSocket.getLocalPort();
     }
 
     public void close() {

@@ -17,7 +17,6 @@ public class MessageParsingTest {
         assertEquals("[username]: content", message.toString());
     }
 
-    @Disabled("Currently we do not throw the exception")
     @Test
     public void testWithoutSemicolon() {
         String data = "messageWithoutUsername";
