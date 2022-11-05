@@ -4,6 +4,7 @@ import com.dsidak.client.Client;
 import com.dsidak.server.Server;
 import com.dsidak.utils.Message;
 import com.dsidak.utils.Testable;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -132,7 +133,7 @@ public class ClientsInteractionTest implements Testable {
         assertTrue(messages1.contains(message2));
     }
 
-    private void startClient(Client client) {
+    private void startClient(@NotNull Client client) {
         new Thread(() -> {
             client.listenMessage();
             client.run();

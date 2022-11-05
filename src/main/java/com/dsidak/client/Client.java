@@ -2,6 +2,7 @@ package com.dsidak.client;
 
 import com.dsidak.utils.Message;
 import com.dsidak.utils.MessageUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,7 +23,7 @@ public class Client {
     private Queue<Message> messages;
     private final String username;
 
-    public Client(Socket socket, String clientName) {
+    public Client(@NotNull Socket socket, @NotNull String clientName) {
         try {
             this.socket = socket;
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -72,25 +73,27 @@ public class Client {
         }).start();
     }
 
-    public void sendMessage(Message message) throws IOException {
+    public void sendMessage(@NotNull Message message) throws IOException {
         MessageUtils.sendMessage(message, writer);
         messages.add(message);
     }
 
-    public void readMessage(Message message) {
-        System.out.println(message.toString());
+    public void readMessage(@NotNull Message message) {
+        System.out.println(message);
         messages.add(message);
     }
 
-    private void readMessage(String message) {
+    private void readMessage(@NotNull String message) {
         System.out.println(message);
         messages.add(Message.of(message, ""));
     }
 
+    @NotNull
     public BufferedWriter getWriter() {
         return writer;
     }
 
+    @NotNull
     public Queue<Message> getMessages() {
         return messages;
     }

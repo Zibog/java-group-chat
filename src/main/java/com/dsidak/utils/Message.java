@@ -1,15 +1,21 @@
 package com.dsidak.utils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+
 public class Message {
     private final String username;
     private final String content;
 
-    private Message(String username, String content) {
+    private Message(@NotNull String username, @Nullable String content) {
         this.username = username;
         this.content = content;
     }
 
-    public static Message of(String message) {
+    @NotNull
+    public static Message of(@NotNull String message) {
         if (!message.matches(".*:.*")) {
             throw new IllegalArgumentException("Message without username: " + message);
         }
@@ -23,14 +29,17 @@ public class Message {
         return new Message(username, messageData[1].trim());
     }
 
-    public static Message of(String username, String content) {
+    @NotNull
+    public static Message of(@NotNull String username, @Nullable String content) {
         return new Message(username, content);
     }
 
+    @NotNull
     public String getUsername() {
         return username;
     }
 
+    @Nullable
     public String getContent() {
         return content;
     }
@@ -50,7 +59,7 @@ public class Message {
             return false;
         }
 
-        return username.equals(message.username) && content.equals(message.content);
+        return username.equals(message.username) && Objects.equals(content, message.content);
     }
 
     @Override

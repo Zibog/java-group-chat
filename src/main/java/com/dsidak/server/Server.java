@@ -1,9 +1,10 @@
 package com.dsidak.server;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketOption;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class Server {
@@ -12,7 +13,7 @@ public class Server {
      */
     private final ServerSocket serverSocket;
 
-    public Server(ServerSocket serverSocket) {
+    public Server(@NotNull ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
@@ -42,9 +43,7 @@ public class Server {
     public void close() {
         try {
             System.out.println("Server shutdown");
-            if (serverSocket != null) {
-                serverSocket.close();
-            }
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
